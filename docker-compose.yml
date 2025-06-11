@@ -1,0 +1,50 @@
+services:
+
+  
+  php:
+    build:
+      context: ./ # aqui inserimos o caminho para acessar o dockerfile
+      dockerfile: Dockerfile # nome do dockerfile
+    container_name: container_php # nome do container
+    restart: always # reinicia toda vez que o container cair 
+    volumes:
+      - ./CRUD:/var/www/html 
+    ports:
+      - "80:80" # libera a porta 80 pro php
+    networks:
+      - app-network 
+
+
+  mysql:
+    image: mysql:5.7 # cria a imagem e já o programa(mysql)
+    container_name: container_msql # nome do container
+    restart: always # reinicia toda vez que o container cair 
+    volumes:
+      - ./mysql:/var/lib/mysql # cria uma pasta mysql para salvar os dados da pasta mysql que esta dentro do container
+      - ./CRUD:/docker-entrypoint-initdb.d # aqui ele executa e salva as tabelas 
+    ports:
+      - "3306:3306" # libera a porta 3306 pro mysql
+    environment:
+        MYSQL_ROOT_PASSWORD: postdba
+        MYSQL_DATABASE: crud
+
+    networks:
+      - app-network 
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest # imagem do phpmyadmin
+    container_name: container_phpmyadmin # nome do container
+    restart: always # reinicia sempre que o container cair 
+    depends_on:
+      - mysql # define o mysql como dependencia pro phpmyadmin rodar
+    environment:
+      PMA_HOST: mysql # INDICA O HOST DO MYSQL PARA O PHPMYADMIN SE CONECTAR (NOME DO SERVIÇO)
+      MYSQL_ROOT_PASSWORD: postdba # SENHA DO ROOT DO MYSQL (MESMA CONFIGURADA NO CONTAINER MYSQL)
+    ports:
+      - "8080:80" # libera a posta 8080
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge # rede padrão
