@@ -48,7 +48,7 @@ require 'header.php';
         }
         ?>
     </div>
-    <a href="contato.php" class="btn btn-info ms-5" role="button">Voltar</a>
+    <a href="index.php" class="btn btn-info ms-5" role="button">Voltar</a>
 </div>
 
 <?php
